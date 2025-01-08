@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> Game Tembak Burung </title>
+    <style type="text/css">
+        body {
+            font-family: sans-serif;
+        }
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Game Tembak Burung</h1>
+    <p class="bold">Top Score: <span id="topscore"></span></p>
+    <p class="bold">Total waktu: <span id="totalwaktu"></span></p>
+    <img id="bird" style="display: none;">
+
+    <script type="text/javascript">
+        var counter = 1;
+        var start = "";
+        var end = "";
+        var totalWaktu = "";
+
+        if (localStorage.getItem("topscore") !== null){
+            var topScore = localStorage.getItem("topscore");
+        document.getElementById('topscore').innerHTML = topScore ? topScore + "s" : "None";
+        }
+
+        
+        // Tampilkan gambar burung secara random
+        tampilkanGambar();
+
+        function tampilkanGambar() {
+            var top = Math.random() * 400;
+            var left = Math.random() * 400;
+
+            start = new Date().getTime();
+
+            var bird = document.getElementById("bird");
+            bird.src = "bird.png";
+            bird.style.height = "60px";
+            bird.style.width = "60px";
+            bird.style.top = top + "px";
+            bird.style.left = left + "px";
+            bird.style.position = "relative";
+            bird.style.display = "block";
+        }
+
+        // Kalau burung ditembak ganti gambar jadi bomb
+        document.getElementById("bird").onclick = function () {
+            document.getElementById("bird").src = "bom.png";
+            document.getElementById("bird").style.height = "100px";
+            document.getElementById("bird").style.width = "100px";
+            setTimeout(sembunyikanGambar, 500);
+
+            // Setelah 5 kali tembakan hitung total waktu
+            if (counter < 5) {
+                setTimeout(tampilkanGambar, 600);
+                counter++;
+            } else {
+                setTimeout (function() {alert("selesai"); }, 100);
+                end = new Date().getTime();
+                totalWaktu = (end - start) / 1000;
+                document.getElementById("totalwaktu").innerHTML = totalWaktu + "s";
+                setTopscore();
+            }
+        };
+
+        function sembunyikanGambar() {
+            document.getElementById("bird").style.display = "none";
+        }
+
+        // Set top score
+        function setTopscore() {
+            if (localStorage.getItem("topscore") == null) {
+                localStorage.setItem("topscore", totalWaktu);
+                document.getElementById("topscore").innerHTML = totalWaktu + "s";
+            } else if (totalWaktu < topScore) {
+                localStorage.setItem("topscore", totalWaktu);
+                document.getElementById("topscore").innerHTML = totalWaktu + "s";
+            }
+        }
+    </script>
+</body>
+</html>
